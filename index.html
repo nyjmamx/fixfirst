@@ -80,7 +80,17 @@ const ffCatalog={
 const support={Apple:'https://support.apple.com/',Samsung:'https://www.samsung.com/us/support/',Google:'https://support.google.com/',Dell:'https://www.dell.com/support/home/',Lenovo:'https://support.lenovo.com/',HP:'https://support.hp.com/',Whirlpool:'https://www.whirlpool.com/services/manuals.html',LG:'https://www.lg.com/us/support',GE:'https://www.geappliances.com/ge/service-and-support/',Canon:'https://www.usa.canon.com/support',Brother:'https://support.brother.com/',TPLink:'https://www.tp-link.com/us/support/',Netgear:'https://www.netgear.com/support/',ASUS:'https://www.asus.com/support/',Eero:'https://support.eero.com/'};
 const el=id=>document.getElementById(id);
 function fillSelect(id,items,prompt){const s=el(id);s.replaceChildren(new Option(prompt,''),...items.map(v=>new Option(v,v)));s.disabled=!items.length}
-el('repoCategory').addEventListener('change',()=>{fillSelect('repoBrand',Object.keys(ffCatalog[el('repoCategory').value]||{}),'Select brand');fillSelect('repoModel',[],'Select brand first');fillSelect('repoIssue',[],'Select model first');el('repoOutput').replaceChildren()});
+function refreshRepositoryCategory(){
+ const category=el('repoCategory').value;
+ const brands=Object.keys(ffCatalog[category]||{});
+ fillSelect('repoBrand',brands,brands.length?'Select manufacturer':'Choose device type first');
+ fillSelect('repoModel',[],'Choose manufacturer first');
+ fillSelect('repoIssue',[],'Choose model first');
+ el('repoOutput').replaceChildren();
+}
+el('repoCategory').addEventListener('change',refreshRepositoryCategory);
+el('repoCategory').addEventListener('input',refreshRepositoryCategory);
+refreshRepositoryCategory();
 el('repoBrand').addEventListener('change',()=>{fillSelect('repoModel',Object.keys(ffCatalog[el('repoCategory').value]?.[el('repoBrand').value]||{}),'Select model');fillSelect('repoIssue',[],'Select model first')});
 el('repoModel').addEventListener('change',()=>fillSelect('repoIssue',ffCatalog[el('repoCategory').value]?.[el('repoBrand').value]?.[el('repoModel').value]||[],'Select symptom'));
 el('repoClear').onclick=()=>{el('repoCategory').value='';el('repoCategory').dispatchEvent(new Event('change'))};
